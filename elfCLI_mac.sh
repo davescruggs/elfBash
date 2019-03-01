@@ -26,13 +26,13 @@ day=${day:-Yesterday}
 #echo ${day}
 
 #set elfs to the result of ELF query
-elfs=`curl ${instance_url}/services/data/v29.0/query?q=Select+Id+,+EventType+,+LogDate+From+EventLogFile+Where+LogDate+=+${day} -H "Authorization: Bearer ${access_token}" -H "X-PrettyPrint:1"`
+elfs=`curl ${instance_url}/services/data/v45.0/query?q=Select+Id+,+EventType+,+LogDate+From+EventLogFile+Where+LogDate+=+${day} -H "Authorization: Bearer ${access_token}" -H "X-PrettyPrint:1"`
 
 #uncomment next line if you want to see the result of elfs
 #echo ${elfs}
 
 #uncomment next line if you want to see the array of Ids from the ELF query
-#echo ${elfs} | jq -r ".records[].Id"
+echo ${elfs} | jq -r ".records[].Id"
 
 #set the three variables to the array of Ids, EventTypes, and LogDates which will be used when downloading the files into your directory
 ids=( $(echo ${elfs} | jq -r ".records[].Id") )
@@ -51,8 +51,8 @@ for i in "${!ids[@]}"; do
     mkdir "${logDates[$i]}"
 
     #uncomment the next line to see the curl command to download log files
-    #echo "curl \"${instance_url}/services/data/v29.0/sobjects/EventLogFile/${ids[$i]}/LogFile\" -H \"Authorization: Bearer ${access_token}\" -H \"X-PrettyPrint:1\" -o \"${eventTypes[$i]}-${logDates[$i]}.csv\""
+    #echo "curl \"${instance_url}/services/data/v45.0/sobjects/EventLogFile/${ids[$i]}/LogFile\" -H \"Authorization: Bearer ${access_token}\" -H \"X-PrettyPrint:1\" -o \"${eventTypes[$i]}-${logDates[$i]}.csv\""
 
     #download files into the logDate directory
-    curl --compressed "${instance_url}/services/data/v29.0/sobjects/EventLogFile/${ids[$i]}/LogFile" -H "Authorization: Bearer ${access_token}" -H "X-PrettyPrint:1" -o "${logDates[$i]}/${eventTypes[$i]}-${logDates[$i]}.csv"
+    curl --compressed "${instance_url}/services/data/v45.0/sobjects/EventLogFile/${ids[$i]}/LogFile" -H "Authorization: Bearer ${access_token}" -H "X-PrettyPrint:1" -o "${logDates[$i]}/${eventTypes[$i]}-${logDates[$i]}.csv"
 done
